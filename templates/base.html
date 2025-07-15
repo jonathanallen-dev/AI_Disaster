@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Disaster Prep Assistant{% endblock %}</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #ff7043 !important;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        /* Chat bubble styles */
+        .chat-message.user {
+            background-color: #ffe0b2;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            text-align: right;
+            color: #000;
+        }
+
+        .chat-message.bot {
+            background-color: #ffccbc;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            color: #000;
+        }
+
+        /* Map container */
+        #map {
+            position: relative !important;
+            height: 500px !important;
+            margin-bottom: 2rem !important;
+            clear: both;
+            z-index: 0 !important;
+        }
+
+        .leaflet-container {
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 0 !important;
+        }
+
+        /* Pre-generated AI response styling */
+        #pre_generated_plan {
+            position: relative;
+            z-index: 10;
+            background: #fff3e0;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #ffa726;
+            margin-bottom: 2rem;
+            white-space: pre-wrap;
+        }
+
+        /* Chat box */
+        #chat-box {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #fff;
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">Disaster Prep Assistant</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('risk_summary') }}">Risk Summary</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('wildfire') }}">Wildfire</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('earthquake') }}">Earthquake</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('flood') }}">Flood</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main page content -->
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Bootstrap JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

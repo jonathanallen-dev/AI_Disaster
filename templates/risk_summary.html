@@ -1,0 +1,13 @@
+<!-- templates/risk_summary.html -->
+{% extends "base.html" %}
+{% block title %}Risk Summary - Disaster Prep Assistant{% endblock %}
+
+{% block content %}
+<h2>Risk Summary for ZIP {{ zip_code }}</h2>
+<p>Based on your input, view detailed hazard information below:</p>
+<ul class="list-group">
+    <li class="list-group-item"><a href="{{ url_for('wildfire') }}">Wildfire Risk</a></li>
+    <li class="list-group-item"><a href="{{ url_for('earthquake') }}">Earthquake Risk</a></li>
+    <li class="list-group-item"><a href="{{ url_for('flood') }}">Flood Risk</a></li>
+</ul>
+{% endblock %}

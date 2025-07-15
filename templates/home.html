@@ -1,0 +1,26 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+{% block title %}Home - Disaster Prep Assistant{% endblock %}
+
+{% block content %}
+<h2>Disaster Preparedness Form</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="zip_code" class="form-label">ZIP Code <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="zip_code" name="zip_code" required>
+    </div>
+    <div class="mb-3">
+        <label for="household" class="form-label">Household Size</label>
+        <input type="number" min="1" class="form-control" id="household" name="household">
+    </div>
+    <div class="mb-3">
+        <label for="special_needs" class="form-label">Special Needs / Medical Concerns</label>
+        <textarea class="form-control" id="special_needs" name="special_needs" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="preparedness" class="form-label">Have you taken preparedness steps? (yes/no)</label>
+        <input type="text" class="form-control" id="preparedness" name="preparedness">
+    </div>
+    <button type="submit" class="btn btn-primary" style="background-color:#ff7043; border:none;">See My Risk Summary</button>
+</form>
+{% endblock %}
