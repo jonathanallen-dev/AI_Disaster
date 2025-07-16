@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}About | Disaster Prep Assistant{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm p-4 mt-4 text-center">
+    <h1 class="mb-3 text-danger fw-bold">About This Project</h1>
+    <p>
+        Hi, I'm <strong>Adan J Allen</strong>, the founder of the Disaster Prep Assistant. I'm part of the Hidden Genius Project, and I created this platform to help people in cities like Oakland and throughout Alameda County stay safe when disaster strikes.
+    </p>
+
+    <p>
+        This app gives you clear, personalized instructions for how to respond to wildfires, earthquakes, and floods. It uses real hazard data and AI to understand your ZIP code, family needs, and medical concerns—then gives you the exact steps to stay safe.
+    </p>
+
+    <h3 class="mt-4 fw-semibold">Why I Built This</h3>
+    <p>
+        Growing up, I saw how disasters hit harder in communities that weren’t prepared. Too many families don’t have access to clear emergency plans. I built this project to change that—with smart tools that are accessible, useful, and built with real people in mind.
+    </p>
+
+    <h3 class="mt-4 fw-semibold">What’s Next</h3>
+    <p>
+        My goal is to expand beyond Alameda County, add real-time alerts, translate the app into other languages, and partner with cities to make this a tool every resident can count on. This project is just the beginning of how I hope to use tech for good.
+    </p>
+
+    <p class="text-muted mt-4">
+        &copy; 2025 Adan J Allen | Hidden Genius Project
+    </p>
+
+    <div class="mt-4">
+        <a href="{{ url_for('home') }}" class="btn btn-outline-primary">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

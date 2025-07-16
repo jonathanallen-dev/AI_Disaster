@@ -13,16 +13,24 @@ Wildfire Risk - Disaster Prep Assistant
 </div>
 
 <h3>Chat with your Wildfire Safety Assistant</h3>
+
 <div id="chat-box" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 10px; background: #fff;">
     {% for msg in chat %}
         {% if msg.role == "user" %}
-            <div class="chat-message user">{{ msg['content'] }}</div>
+            <div class="chat-message user" style="text-align: right; margin-bottom: 10px;">
+                <strong>You:</strong> {{ msg.content }}
+            </div>
         {% else %}
-            <div class="chat-message bot">{{ msg['content'] }}</div>
+            <div class="chat-message bot" style="background-color: #ffe0b2; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <strong>Assistant:</strong> {{ msg.content }}
+            </div>
         {% endif %}
     {% endfor %}
+
     {% if reply %}
-        <div class="chat-message bot">{{ reply }}</div>
+        <div class="chat-message bot" style="background-color: #ffe0b2; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+            <strong>Assistant:</strong> {{ reply }}
+        </div>
     {% endif %}
 </div>
 

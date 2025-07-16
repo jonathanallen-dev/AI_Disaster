@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from geopy.geocoders import Nominatim
-import folium
 import os
-import pandas as pd
 import geopandas as gpd
+import requests
 from openai import OpenAI
 from dotenv import load_dotenv
+import json
 
 # Load environment variables from secret.env
 load_dotenv("secret.env")
@@ -33,10 +33,12 @@ def home():
         session["household"] = request.form.get("household")
         session["special_needs"] = request.form.get("special_needs")
         session["preparedness"] = request.form.get("preparedness")
+
         # Clear any existing chat data to force regeneration
         for hazard in ["wildfire", "flood", "earthquake"]:
             session.pop(f"chat_{hazard}", None)
             session.pop(f"meta_{hazard}", None)
+
         return redirect(url_for("risk_summary"))
     return render_template("home.html")
 
@@ -55,40 +57,78 @@ def risk_summary():
 
     return render_template("risk_summary.html", zip_code=zip_code, top_risk=top_risk)
 
+# --- About Page ---
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+# --- Live Earthquakes in California (NEW) ---
+@app.route("/live-earthquakes")
+def live_earthquakes():
+    usgs_url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+    try:
+        response = requests.get(usgs_url)
+        data = response.json()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    california_bounds = {
+        "min_lat": 32.0,
+        "max_lat": 42.0,
+        "min_lon": -125.0,
+        "max_lon": -114.0
+    }
+
+    filtered_features = []
+    for feature in data["features"]:
+        lon, lat, *_ = feature["geometry"]["coordinates"]
+        if (
+            california_bounds["min_lat"] <= lat <= california_bounds["max_lat"]
+            and california_bounds["min_lon"] <= lon <= california_bounds["max_lon"]
+        ):
+            filtered_features.append(feature)
+
+    return jsonify({
+        "type": "FeatureCollection",
+        "features": filtered_features
+    })
+
+# --- Flood Data Route to fix GeometryCollection issue ---
+@app.route("/flood_data")
+def flood_data():
+    path = os.path.join("static", "flood_zones.geojson")
+    with open(path) as f:
+        geojson_data = json.load(f)
+
+    if geojson_data.get("type") == "GeometryCollection":
+        features = []
+        for geom in geojson_data.get("geometries", []):
+            features.append({
+                "type": "Feature",
+                "properties": {},  # add properties here if available
+                "geometry": geom
+            })
+        geojson_data = {
+            "type": "FeatureCollection",
+            "features": features
+        }
+
+    return jsonify(geojson_data)
+
 # --- Shared Hazard Page Logic ---
 def hazard_page(hazard, title, color):
     zip_code = session.get("zip_code", "94601")
     zip_shape = zip_gdf[zip_gdf["ZCTA5CE10"] == zip_code]
 
     if not zip_shape.empty:
-        centroid = zip_shape.geometry.centroid.iloc[0]
-        m = folium.Map(location=[centroid.y, centroid.x], zoom_start=13, height="500px")
-        folium.GeoJson(
-            zip_shape.to_json(),
-            name="ZIP Boundary",
-            style_function=lambda x: {
-                'color': color,
-                'weight': 3,
-                'fillOpacity': 0.1
-            }
-        ).add_to(m)
-        folium.Marker(
-            location=[centroid.y, centroid.x],
-            popup=f"ZIP Code: {zip_code}"
-        ).add_to(m)
+        zip_geojson = zip_shape.to_json()
     else:
         lat, lon = geocode_zip(zip_code)
-        m = folium.Map(location=[lat, lon], zoom_start=12, height="500px")
-        folium.Circle(
-            location=[lat, lon],
-            radius=1500,
-            color=color,
-            fill=True,
-            fill_opacity=0.3,
-            popup=f"ZIP Code: {zip_code}"
-        ).add_to(m)
-
-    map_html = m._repr_html_()
+        from shapely.geometry import Point
+        import geopandas as gpd
+        point = Point(lon, lat)
+        fallback = gpd.GeoDataFrame(index=[0], crs="EPSG:4326", geometry=[point.buffer(0.02)])
+        zip_geojson = fallback.to_json()
 
     chat_key = f"chat_{hazard}"
     meta_key = f"meta_{hazard}"
@@ -137,9 +177,12 @@ def hazard_page(hazard, title, color):
             "initial_response": assistant_msg
         }
         session[meta_key] = metadata
-
         chat = []
         session[chat_key] = chat
+
+    # Inject AI response if not already shown
+    if not any(msg['content'] == metadata["initial_response"] for msg in chat):
+        chat.insert(0, {"role": "assistant", "content": metadata["initial_response"]})
 
     reply = None
 
@@ -168,7 +211,7 @@ def hazard_page(hazard, title, color):
     return render_template(
         f"{hazard}.html",
         zip_code=zip_code,
-        map_html=map_html,
+        zip_geojson=zip_geojson,
         initial_response=metadata.get("initial_response"),
         chat=chat,
         reply=reply
