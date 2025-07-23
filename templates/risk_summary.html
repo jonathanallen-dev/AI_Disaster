@@ -1,13 +1,49 @@
-<!-- templates/risk_summary.html -->
 {% extends "base.html" %}
 {% block title %}Risk Summary - Disaster Prep Assistant{% endblock %}
 
 {% block content %}
-<h2>Risk Summary for ZIP {{ zip_code }}</h2>
-<p>Based on your input, view detailed hazard information below:</p>
-<ul class="list-group">
-    <li class="list-group-item"><a href="{{ url_for('wildfire') }}">Wildfire Risk</a></li>
-    <li class="list-group-item"><a href="{{ url_for('earthquake') }}">Earthquake Risk</a></li>
-    <li class="list-group-item"><a href="{{ url_for('flood') }}">Flood Risk</a></li>
-</ul>
+<h2 class="mb-4">Risk Summary for ZIP {{ zip_code }}</h2>
+
+<p class="lead mb-4">
+  Here’s a quick overview of your disaster risks based on your location and inputs.
+  Click any hazard below to get detailed safety instructions.
+</p>
+
+<div class="row g-4">
+  {% for hazard_name, score, explanation in hazards %}
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">
+          {% if hazard_name == 'Wildfire' %}
+            🔥
+          {% elif hazard_name == 'Flood' %}
+            🌊
+          {% elif hazard_name == 'Earthquake' %}
+            🌍
+          {% else %}
+            ⚠️
+          {% endif %}
+          <a href="{{ url_for(hazard_name.lower()) }}" class="text-decoration-none ms-2">{{ hazard_name }} Risk</a>
+        </h5>
+        <p class="card-text flex-grow-1">{{ explanation }}</p>
+        <div>
+          <div class="progress mb-2" style="height: 20px;">
+            {% set percent = (score / 10) * 100 %}
+            {% if score >= 7 %}
+              {% set bar_class = 'bg-danger' %}
+            {% elif score >= 4 %}
+              {% set bar_class = 'bg-warning' %}
+            {% else %}
+              {% set bar_class = 'bg-success' %}
+            {% endif %}
+            <div class="progress-bar {{ bar_class }}" role="progressbar" style="width: {{ percent }}%;" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="10">{{ score }}/10</div>
+          </div>
+          <a href="{{ url_for(hazard_name.lower()) }}" class="btn btn-outline-primary btn-sm w-100">View Safety Tips</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 {% endblock %}

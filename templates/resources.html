@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Disaster Resources{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Disaster Preparedness Resources</h1>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Emergency Kit Checklist</h5>
+                    <p class="card-text">See what items to pack for disasters like wildfires, earthquakes, and floods.</p>
+                    <a href="https://www.ready.gov/kit" target="_blank" class="btn btn-primary">View Checklist</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">FEMA Disaster Help</h5>
+                    <p class="card-text">Apply for assistance, learn about disaster types, and get recovery support.</p>
+                    <a href="https://www.fema.gov" target="_blank" class="btn btn-primary">Visit FEMA.gov</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Local Shelter Map</h5>
+                    <p class="card-text">Find shelters in Alameda County during an active disaster.</p>
+                    <a href="https://www.redcross.org/get-help/disaster-relief-and-recovery-services/find-an-open-shelter.html" target="_blank" class="btn btn-primary">Find Shelters</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Evacuation Planning</h5>
+                    <p class="card-text">How to create a family emergency plan that includes evacuation routes and contacts.</p>
+                    <a href="https://www.ready.gov/evacuation" target="_blank" class="btn btn-primary">Plan Your Evacuation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

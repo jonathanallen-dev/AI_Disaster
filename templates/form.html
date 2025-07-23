@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Household Info - Disaster Prep Assistant{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2 class="mb-4">Tell Us About Your Household</h2>
+</div>
+
+<form action="{{ url_for('form') }}" method="POST" class="mx-auto" style="max-width: 600px;">
+    <div class="mb-3">
+        <label for="zip_code" class="form-label">ZIP Code</label>
+        <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="e.g. 94601" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="household_size" class="form-label">Household Size</label>
+        <input type="number" class="form-control" id="household_size" name="household_size" placeholder="e.g. 4" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="medical_needs" class="form-label">Any Special Medical Needs?</label>
+        <input type="text" class="form-control" id="medical_needs" name="medical_needs" placeholder="e.g. Asthma, wheelchair access">
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Submit & Get Risk Summary</button>
+</form>
+{% endblock %}

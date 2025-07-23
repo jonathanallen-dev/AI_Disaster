@@ -1,43 +1,131 @@
-<!-- templates/wildfire.html -->
 {% extends "base.html" %}
 
-{% block title %}
-Wildfire Risk - Disaster Prep Assistant
-{% endblock %}
+{% block title %}Wildfire Preparedness{% endblock %}
 
 {% block content %}
-<h2>🔥 Wildfire Risk for ZIP {{ zip_code }}</h2>
+<h2 class="mb-4 text-center">Wildfire Risk & Preparedness</h2>
 
-<div id="map" style="height: 400px; margin-bottom: 1rem;">
-    {{ map_html|safe }}
+<div id="map"></div>
+
+<div id="pre_generated_plan">
+    <h5><strong>AI Wildfire Safety Plan</strong></h5>
+    {{ initial_response | safe }}
 </div>
 
-<h3>Chat with your Wildfire Safety Assistant</h3>
-
-<div id="chat-box" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 10px; background: #fff;">
-    {% for msg in chat %}
-        {% if msg.role == "user" %}
-            <div class="chat-message user" style="text-align: right; margin-bottom: 10px;">
-                <strong>You:</strong> {{ msg.content }}
-            </div>
-        {% else %}
-            <div class="chat-message bot" style="background-color: #ffe0b2; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                <strong>Assistant:</strong> {{ msg.content }}
-            </div>
-        {% endif %}
-    {% endfor %}
-
-    {% if reply %}
-        <div class="chat-message bot" style="background-color: #ffe0b2; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-            <strong>Assistant:</strong> {{ reply }}
+<div id="chat-box">
+    {% for message in chat %}
+        <div class="chat-message {{ 'user' if message.role == 'user' else 'bot' }}">
+            {{ message.content }}
         </div>
-    {% endif %}
+    {% endfor %}
 </div>
 
 <form method="POST" class="mt-3">
     <div class="input-group">
-        <input type="text" class="form-control" name="message" placeholder="Ask a wildfire safety question..." required autofocus>
-        <button class="btn btn-primary" type="submit" style="background-color:#ff7043; border:none;">Send</button>
+        <input type="text" name="message" class="form-control" placeholder="Ask a wildfire safety question..." required>
+        <button type="submit" class="btn btn-warning">Ask</button>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const map = L.map('map').setView([37.75, -122.2], 10);
+
+// Base map
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// ZIP outline
+{% if zip_geojson %}
+const userZipData = {{ zip_geojson | safe }};
+const userZipLayer = L.geoJSON(userZipData, {
+    style: {
+        color: '#000000',
+        weight: 5,
+        fillColor: '#000000',
+        fillOpacity: 0.2
+    }
+}).addTo(map);
+map.fitBounds(userZipLayer.getBounds());
+{% else %}
+console.warn("ZIP GeoJSON not available.");
+{% endif %}
+
+// Color mapping for hazard classes
+function getHazardColor(hazardClass) {
+    switch(hazardClass) {
+        case 'Very High': return '#d73027'; // dark red
+        case 'High': return '#fc8d59';      // orange
+        case 'Moderate': return '#fee08b';  // yellow
+        case 'Low': return '#d9ef8b';       // light green
+        default: return '#cccccc';           // grey
+    }
+}
+
+// Load wildfire hazard zones
+const wildfirePaths = [
+    '/static/AlamedaCounty_HazardZones.geojson',
+    '/wildfire_data'  // fallback Flask route
+];
+
+function tryLoadWildfire(index = 0) {
+    if (index >= wildfirePaths.length) {
+        showWildfireDataError("Could not load wildfire zones.");
+        return;
+    }
+
+    fetch(wildfirePaths[index])
+        .then(res => {
+            if (!res.ok) throw new Error("Fetch failed");
+            return res.json();
+        })
+        .then(data => {
+            renderWildfireZones(data);
+        })
+        .catch(() => {
+            tryLoadWildfire(index + 1);
+        });
+}
+
+function renderWildfireZones(data) {
+    L.geoJSON(data, {
+        style: function(feature) {
+            const hazClass = feature.properties.HAZ_CLASS || "Unknown";
+            const color = getHazardColor(hazClass);
+            return {
+                color: color,
+                weight: 2,
+                fillColor: color,
+                fillOpacity: 0.5
+            };
+        },
+        onEachFeature: (feature, layer) => {
+            let popup = '<strong>Wildfire Hazard Zone</strong><br>';
+            for (const key in feature.properties) {
+                const val = feature.properties[key];
+                if (val) popup += `<strong>${key}:</strong> ${val}<br>`;
+            }
+            layer.bindPopup(popup);
+        }
+    }).addTo(map);
+}
+
+function showWildfireDataError(msg) {
+    const errorDiv = document.createElement('div');
+    errorDiv.innerHTML = `
+        <div style="position: absolute; top: 10px; right: 10px; background: #ffcdd2; padding: 10px; border-radius: 8px; color: #c62828; font-weight: bold;">
+            ⚠️ ${msg}
+        </div>
+    `;
+    document.getElementById('map').appendChild(errorDiv);
+}
+
+tryLoadWildfire();
+</script>
 {% endblock %}

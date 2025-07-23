@@ -42,11 +42,41 @@ Earthquake Risk - Disaster Prep Assistant
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-const map = L.map('map').setView([37.5, -119.5], 6); // Centered on CA
+const map = L.map('map').setView([37.5, -119.5], 6); // Centered on California
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
 }).addTo(map);
+
+// Add user's ZIP code boundary
+{% if zip_geojson %}
+const userZipData = {{ zip_geojson | safe }};
+const userZipLayer = L.geoJSON(userZipData, {
+    style: {
+        color: '#ff4444',
+        weight: 3,
+        fillColor: '#ff4444',
+        fillOpacity: 0.2
+    }
+}).addTo(map);
+map.fitBounds(userZipLayer.getBounds());
+{% else %}
+console.warn("ZIP GeoJSON not available.");
+{% endif %}
+
+// Add local fault lines from server
+{% if fault_geojson %}
+const faultData = {{ fault_geojson | safe }};
+L.geoJSON(faultData, {
+  style: {
+    color: "#6a1b9a",
+    weight: 2,
+    dashArray: "4"
+  }
+}).addTo(map);
+{% else %}
+console.warn("Fault GeoJSON not available.");
+{% endif %}
 
 // Bounding box for CA: [south, west, north, east]
 const californiaBounds = {
@@ -93,10 +123,8 @@ function loadEarthquakes() {
     });
 }
 
-// Initial load
+// Load earthquakes initially and every 5 minutes
 loadEarthquakes();
-
-// Optional: refresh every 5 min
 setInterval(loadEarthquakes, 5 * 60 * 1000);
 </script>
 {% endblock %}

@@ -1,26 +1,547 @@
-<!-- templates/home.html -->
 {% extends "base.html" %}
-{% block title %}Home - Disaster Prep Assistant{% endblock %}
 
 {% block content %}
-<h2>Disaster Preparedness Form</h2>
-<form method="POST">
-    <div class="mb-3">
-        <label for="zip_code" class="form-label">ZIP Code <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="zip_code" name="zip_code" required>
-    </div>
-    <div class="mb-3">
-        <label for="household" class="form-label">Household Size</label>
-        <input type="number" min="1" class="form-control" id="household" name="household">
-    </div>
-    <div class="mb-3">
-        <label for="special_needs" class="form-label">Special Needs / Medical Concerns</label>
-        <textarea class="form-control" id="special_needs" name="special_needs" rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="preparedness" class="form-label">Have you taken preparedness steps? (yes/no)</label>
-        <input type="text" class="form-control" id="preparedness" name="preparedness">
-    </div>
-    <button type="submit" class="btn btn-primary" style="background-color:#ff7043; border:none;">See My Risk Summary</button>
-</form>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Prep Assistant - Stay Safe, Stay Prepared</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-orange: #ff7043;
+            --secondary-blue: #0288d1;
+            --accent-red: #f44336;
+            --text-dark: #2c3e50;
+            --bg-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, 
+                rgba(255, 112, 67, 0.9) 0%, 
+                rgba(244, 67, 54, 0.9) 50%,
+                rgba(2, 136, 209, 0.9) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-20px) translateY(-20px); }
+            100% { transform: translateX(0) translateY(0); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: slideInUp 1s ease-out 0.3s both;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #fff, #f8f9fa);
+            color: var(--primary-orange);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            animation: slideInUp 1s ease-out 0.6s both;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            color: var(--accent-red);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--accent-red));
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        .wildfire-icon { color: var(--accent-red); }
+        .earthquake-icon { color: #8d6e63; }
+        .flood-icon { color: var(--secondary-blue); }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Stats Section */
+        .stats {
+            background: linear-gradient(135deg, var(--text-dark), #34495e);
+            color: white;
+            padding: 80px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-orange);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* About Section */
+        .about {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-image {
+            flex: 1;
+            position: relative;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: -20px;
+            bottom: -20px;
+            background: linear-gradient(135deg, var(--primary-orange), var(--accent-red));
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .about-content { flex-direction: column; }
+            .feature-card { margin-bottom: 2rem; }
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-1 {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-2 {
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-3 {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 800 !important;
+            color: var(--primary-orange) !important;
+            font-size: 1.5rem !important;
+        }
+
+        .nav-link {
+            font-weight: 600 !important;
+            color: var(--text-dark) !important;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-orange) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-shield-alt me-2"></i>Disaster Prep Assistant</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#stats">Impact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Floating Elements -->
+        <div class="floating-element floating-1">
+            <i class="fas fa-fire fa-3x"></i>
+        </div>
+        <div class="floating-element floating-2">
+            <i class="fas fa-water fa-3x"></i>
+        </div>
+        <div class="floating-element floating-3">
+            <i class="fas fa-home fa-3x"></i>
+        </div>
+
+        <div class="container">
+            <div class="hero-content">
+                <h1>Stay Safe.<br>Stay Prepared.</h1>
+                <p class="lead">Personalized disaster preparedness for Oakland and Alameda County.<br>Get AI-powered emergency plans tailored to your family's needs.</p>
+                <a href="/home" class="cta-button">
+                    <i class="fas fa-rocket me-2"></i>Get Your Emergency Plan
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold mb-3">Comprehensive Disaster Protection</h2>
+                <p class="lead">Advanced AI technology meets real-world emergency preparedness</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-fire feature-icon wildfire-icon"></i>
+                            <h4 class="fw-bold mb-3">Wildfire Protection</h4>
+                            <p>Real-time wildfire tracking with evacuation routes and safety protocols specific to your area. Get alerts before it's too late.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-mountain feature-icon earthquake-icon"></i>
+                            <h4 class="fw-bold mb-3">Earthquake Readiness</h4>
+                            <p>Seismic risk assessment and personalized earthquake preparedness plans. Know what to do before, during, and after the shaking stops.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-water feature-icon flood-icon"></i>
+                            <h4 class="fw-bold mb-3">Flood Safety</h4>
+                            <p>Flood zone mapping and water emergency protocols. Protect your family with accurate flood risk data and escape planning.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold mb-3">Making A Real Difference</h2>
+                <p class="lead">Empowering communities with life-saving information</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Major Disaster Types Covered</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <span class="stat-number">1.7M+</span>
+                        <span class="stat-label">Alameda County Residents Protected</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Real-Time Monitoring</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <span class="stat-number">AI</span>
+                        <span class="stat-label">Powered Personalization</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="display-4 fw-bold mb-4">Built by the Community, For the Community</h2>
+                    <p class="lead mb-4">Created by <strong>Adan J Allen</strong> through the Hidden Genius Project, this platform bridges the gap between technology and emergency preparedness.</p>
+                    <p class="mb-4">Growing up in Oakland, I witnessed firsthand how disasters disproportionately impact communities that lack access to clear, actionable emergency information. This app changes that narrative.</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Personalized AI recommendations</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Real hazard data integration</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Mobile-first design</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Community-focused approach</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="bg-primary rounded-3 p-5 text-center text-white">
+                        <i class="fas fa-user-graduate fa-5x mb-3 opacity-75"></i>
+                        <h4>Hidden Genius Project</h4>
+                        <p class="mb-0">Empowering young Black men with technology skills to create positive change in their communities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="bg-primary text-white text-center py-5">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-3">Ready to Protect Your Family?</h2>
+            <p class="lead mb-4">Join thousands of Bay Area residents who trust Disaster Prep Assistant for their emergency planning.</p>
+            <a href="/home" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+                <i class="fas fa-shield-alt me-2"></i>Start Your Emergency Plan Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-shield-alt me-2 text-warning"></i>
+                        Disaster Prep Assistant
+                    </h5>
+                    <p class="mb-0">&copy; 2025 Adan J Allen | Hidden Genius Project</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-flex justify-content-md-end justify-content-start gap-3">
+                        <a href="/about" class="text-white-50 text-decoration-none">About</a>
+                        <a href="/home" class="text-white-50 text-decoration-none">Get Started</a>
+                        <a href="#" class="text-white-50 text-decoration-none">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+
+        // Animate stats on scroll
+        const animateStats = () => {
+            const stats = document.querySelectorAll('.stat-number');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const text = target.textContent;
+                        if (!isNaN(text.replace(/[^\d]/g, ''))) {
+                            const finalValue = parseInt(text.replace(/[^\d]/g, ''));
+                            let currentValue = 0;
+                            const increment = finalValue / 50;
+                            const timer = setInterval(() => {
+                                currentValue += increment;
+                                if (currentValue >= finalValue) {
+                                    target.textContent = text;
+                                    clearInterval(timer);
+                                } else {
+                                    target.textContent = Math.floor(currentValue).toLocaleString();
+                                }
+                            }, 30);
+                        }
+                        observer.unobserve(target);
+                    }
+                });
+            });
+            
+            stats.forEach(stat => observer.observe(stat));
+        };
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', animateStats);
+    </script>
+</body>
+</html>
 {% endblock %}
