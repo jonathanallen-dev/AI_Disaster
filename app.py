@@ -31,7 +31,7 @@ def home():
     return render_template("home.html")
 
 # --- Process Form (Updated) ---
-@app.route("/form", methods=["POST"])
+@app.route("/form", methods=["POST"], endpoint='form')
 def process_form():
     """Process form submission from home page"""
     session["zip_code"] = request.form.get("zip_code")

@@ -1,49 +1,605 @@
 {% extends "base.html" %}
 {% block title %}Risk Summary - Disaster Prep Assistant{% endblock %}
 
+{% block head %}
+<style>
+    :root {
+        --primary-orange: #ff7043;
+        --secondary-blue: #0288d1;
+        --accent-red: #f44336;
+        --text-dark: #2c3e50;
+        --bg-light: #f8f9fa;
+        --success-green: #4caf50;
+        --warning-yellow: #ff9800;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-orange), var(--accent-red));
+        color: white;
+        padding: 80px 0;
+        margin-top: -2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+        animation: float 20s infinite linear;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section .lead {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin-bottom: 2rem;
+    }
+
+    .zip-badge {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .overall-risk-summary {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .risk-meter {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin: 0 auto 1rem;
+        position: relative;
+    }
+
+    .risk-meter.high { background: linear-gradient(135deg, #f44336, #d32f2f); }
+    .risk-meter.moderate { background: linear-gradient(135deg, #ff9800, #f57c00); }
+    .risk-meter.low { background: linear-gradient(135deg, #4caf50, #388e3c); }
+
+    .risk-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .risk-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+
+    .risk-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+    }
+
+    .risk-card.wildfire::before { background: linear-gradient(90deg, #f44336, #ff7043); }
+    .risk-card.flood::before { background: linear-gradient(90deg, #0288d1, #03a9f4); }
+    .risk-card.earthquake::before { background: linear-gradient(90deg, #795548, #8d6e63); }
+
+    .hazard-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        display: block;
+        opacity: 0.9;
+    }
+
+    .wildfire-icon { color: #f44336; }
+    .flood-icon { color: #0288d1; }
+    .earthquake-icon { color: #795548; }
+
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1rem;
+        position: relative;
+    }
+
+    .progress-ring svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+
+    .progress-ring circle {
+        fill: none;
+        stroke-width: 8;
+        r: 32;
+        cx: 40;
+        cy: 40;
+    }
+
+    .progress-ring .background {
+        stroke: #e9ecef;
+    }
+
+    .progress-ring .progress {
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    .risk-score {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    .btn-hazard {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-wildfire { 
+        background: linear-gradient(45deg, #f44336, #ff7043);
+        color: white;
+        border: none;
+    }
+    .btn-wildfire:hover { 
+        background: linear-gradient(45deg, #d32f2f, #f44336);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-flood { 
+        background: linear-gradient(45deg, #0288d1, #03a9f4);
+        color: white;
+        border: none;
+    }
+    .btn-flood:hover { 
+        background: linear-gradient(45deg, #0277bd, #0288d1);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-earthquake { 
+        background: linear-gradient(45deg, #795548, #8d6e63);
+        color: white;
+        border: none;
+    }
+    .btn-earthquake:hover { 
+        background: linear-gradient(45deg, #6d4c41, #795548);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .priority-alert {
+        background: linear-gradient(135deg, #f44336, #ff5722);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(244, 67, 54, 0.3);
+    }
+
+    .priority-alert h4 {
+        margin-bottom: 1rem;
+        font-weight: 800;
+    }
+
+    .priority-alert .btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        font-weight: 700;
+        border-radius: 25px;
+        padding: 10px 25px;
+        transition: all 0.3s ease;
+    }
+
+    .priority-alert .btn:hover {
+        background: white;
+        color: var(--accent-red);
+    }
+
+    .action-buttons {
+        background: var(--bg-light);
+        padding: 60px 0;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .action-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .stats-overview {
+        background: linear-gradient(135deg, var(--text-dark), #34495e);
+        color: white;
+        padding: 60px 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-orange);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-20px) translateX(-10px); }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section h1 { font-size: 2.5rem; }
+        .hero-section { padding: 60px 0 40px; }
+        .overall-risk-summary { margin-top: -30px; padding: 1.5rem; }
+        .risk-card { margin-bottom: 2rem; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2 class="mb-4">Risk Summary for ZIP {{ zip_code }}</h2>
-
-<p class="lead mb-4">
-  Here’s a quick overview of your disaster risks based on your location and inputs.
-  Click any hazard below to get detailed safety instructions.
-</p>
-
-<div class="row g-4">
-  {% for hazard_name, score, explanation in hazards %}
-  <div class="col-md-4">
-    <div class="card h-100 shadow-sm">
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title">
-          {% if hazard_name == 'Wildfire' %}
-            🔥
-          {% elif hazard_name == 'Flood' %}
-            🌊
-          {% elif hazard_name == 'Earthquake' %}
-            🌍
-          {% else %}
-            ⚠️
-          {% endif %}
-          <a href="{{ url_for(hazard_name.lower()) }}" class="text-decoration-none ms-2">{{ hazard_name }} Risk</a>
-        </h5>
-        <p class="card-text flex-grow-1">{{ explanation }}</p>
-        <div>
-          <div class="progress mb-2" style="height: 20px;">
-            {% set percent = (score / 10) * 100 %}
-            {% if score >= 7 %}
-              {% set bar_class = 'bg-danger' %}
-            {% elif score >= 4 %}
-              {% set bar_class = 'bg-warning' %}
-            {% else %}
-              {% set bar_class = 'bg-success' %}
-            {% endif %}
-            <div class="progress-bar {{ bar_class }}" role="progressbar" style="width: {{ percent }}%;" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="10">{{ score }}/10</div>
-          </div>
-          <a href="{{ url_for(hazard_name.lower()) }}" class="btn btn-outline-primary btn-sm w-100">View Safety Tips</a>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content text-center">
+            <div class="zip-badge">
+                <i class="fas fa-map-marker-alt me-2"></i>ZIP Code {{ zip_code }}
+            </div>
+            <h1><i class="fas fa-shield-alt me-3"></i>Your Disaster Risk Summary</h1>
+            <p class="lead">Personalized risk assessment and emergency preparedness plan for your location</p>
         </div>
-      </div>
     </div>
-  </div>
-  {% endfor %}
-</div>
+</section>
+
+<!-- Overall Risk Summary -->
+<section class="py-5">
+    <div class="container">
+        <div class="overall-risk-summary">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    {% set highest_score = hazards[0][1] | float %}
+                    {% set highest_hazard = hazards[0][0] %}
+                    {% if highest_score >= 7 %}
+                        <div class="risk-meter high">
+                            <span>{{ "%.1f"|format(highest_score) }}/10</span>
+                        </div>
+                        <h4 class="fw-bold text-danger">High {{ highest_hazard }} Risk</h4>
+                        <p class="text-muted">Immediate attention required</p>
+                    {% elif highest_score >= 4 %}
+                        <div class="risk-meter moderate">
+                            <span>{{ "%.1f"|format(highest_score) }}/10</span>
+                        </div>
+                        <h4 class="fw-bold text-warning">Moderate {{ highest_hazard }} Risk</h4>
+                        <p class="text-muted">Preparation recommended</p>
+                    {% else %}
+                        <div class="risk-meter low">
+                            <span>{{ "%.1f"|format(highest_score) }}/10</span>
+                        </div>
+                        <h4 class="fw-bold text-success">Lower {{ highest_hazard }} Risk</h4>
+                        <p class="text-muted">Basic preparedness advised</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h3 class="fw-bold mb-3">Your Risk Profile</h3>
+                    <p class="lead mb-3">Based on your location in ZIP {{ zip_code }}, your highest risk is <strong>{{ highest_hazard }}</strong> with a score of {{ "%.1f"|format(highest_score) }}/10.</p>
+                    <p class="mb-4">
+                        <i class="fas fa-arrow-down text-primary me-2"></i>
+                        <small class="text-muted">Scroll down to see detailed analysis for all hazards and get your personalized safety plans</small>
+                    </p>
+                    
+                    <div class="row g-3">
+                        <div class="col-sm-4">
+                            <div class="text-center">
+                                <i class="fas fa-home fa-2x text-primary mb-2"></i>
+                                <h6 class="fw-bold">Location Analyzed</h6>
+                                <p class="small text-muted mb-0">ZIP {{ zip_code }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                                <h6 class="fw-bold">Hazards Assessed</h6>
+                                <p class="small text-muted mb-0">3 Major Disasters</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="text-center">
+                                <i class="fas fa-brain fa-2x text-success mb-2"></i>
+                                <h6 class="fw-bold">AI-Powered</h6>
+                                <p class="small text-muted mb-0">Personalized Plans</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Priority Alert (if high risk) -->
+{% if hazards[0][1] | float >= 7 %}
+<section class="py-3">
+    <div class="container">
+        <div class="priority-alert">
+            <h4><i class="fas fa-exclamation-triangle me-2"></i>High Priority Alert</h4>
+            <p class="mb-3">Your area has a high risk score for {{ hazards[0][0] }} ({{ hazards[0][1] }}/10). Immediate preparation is strongly recommended.</p>
+            <a href="{{ url_for(hazards[0][0].lower()) }}" class="btn btn-lg">
+                <i class="fas fa-arrow-right me-2"></i>Get {{ hazards[0][0] }} Safety Plan Now
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Risk Cards -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Detailed Risk Assessment</h2>
+            <p class="lead">Click any hazard below to get your personalized safety plan</p>
+        </div>
+
+        <div class="row g-4">
+            {% for hazard_name, score, explanation in hazards %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card risk-card {{ hazard_name.lower() }}">
+                    <div class="card-body text-center p-4">
+                        {% if hazard_name == 'Wildfire' %}
+                            <i class="fas fa-fire hazard-icon wildfire-icon"></i>
+                        {% elif hazard_name == 'Flood' %}
+                            <i class="fas fa-water hazard-icon flood-icon"></i>
+                        {% elif hazard_name == 'Earthquake' %}
+                            <i class="fas fa-mountain hazard-icon earthquake-icon"></i>
+                        {% endif %}
+                        
+                        <h4 class="fw-bold mb-3">{{ hazard_name }} Risk</h4>
+                        
+                        <!-- Progress Ring -->
+                        <div class="progress-ring">
+                            {% set score_float = score | float %}
+                            {% set circumference = 2 * 3.14159 * 32 %}
+                            {% set progress_offset = circumference - (score_float / 10) * circumference %}
+                            
+                            <svg>
+                                <circle class="background" stroke-dasharray="{{ circumference }}" stroke-dashoffset="0"></circle>
+                                <circle class="progress" 
+                                        stroke="{% if score_float >= 7 %}#f44336{% elif score_float >= 4 %}#ff9800{% else %}#4caf50{% endif %}"
+                                        stroke-dasharray="{{ circumference }}" 
+                                        stroke-dashoffset="{{ progress_offset }}"></circle>
+                            </svg>
+                            <div class="risk-score">{{ score }}/10</div>
+                        </div>
+
+                        <p class="mb-4">{{ explanation }}</p>
+                        
+                        {% if score | float >= 7 %}
+                            <div class="mb-3">
+                                <span class="badge bg-danger fs-6">High Priority</span>
+                            </div>
+                        {% elif score | float >= 4 %}
+                            <div class="mb-3">
+                                <span class="badge bg-warning fs-6">Moderate Priority</span>
+                            </div>
+                        {% else %}
+                            <div class="mb-3">
+                                <span class="badge bg-success fs-6">Lower Priority</span>
+                            </div>
+                        {% endif %}
+
+                        <a href="{{ url_for(hazard_name.lower()) }}" class="btn btn-{{ hazard_name.lower() }}">
+                            <i class="fas fa-shield-alt me-2"></i>Get Safety Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Action Buttons -->
+<section class="action-buttons">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Take Action Now</h2>
+            <p class="lead">Additional resources to keep you and your family safe</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="action-card">
+                    <i class="fas fa-book-open action-icon text-primary"></i>
+                    <h5 class="fw-bold mb-3">Emergency Resources</h5>
+                    <p class="mb-4">Access comprehensive emergency preparedness guides and local resources.</p>
+                    <a href="{{ url_for('resources') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-external-link-alt me-2"></i>View Resources
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="action-card">
+                    <i class="fas fa-map-marked-alt action-icon text-success"></i>
+                    <h5 class="fw-bold mb-3">Live Earthquake Map</h5>
+                    <p class="mb-4">Monitor real-time earthquake activity in your area with our interactive map.</p>
+                    <a href="{{ url_for('live_earthquake_map') }}" class="btn btn-outline-success">
+                        <i class="fas fa-map me-2"></i>View Live Map
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="action-card">
+                    <i class="fas fa-user-graduate action-icon text-warning"></i>
+                    <h5 class="fw-bold mb-3">About This Project</h5>
+                    <p class="mb-4">Learn about the technology and community impact behind this disaster preparedness tool.</p>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-warning">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Overview -->
+<section class="stats-overview">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Your Area At A Glance</h2>
+            <p class="lead">Key statistics for ZIP {{ zip_code }}</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-item">
+                    <span class="stat-number">{{ zip_code }}</span>
+                    <span class="stat-label">Your ZIP Code</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-item">
+                    <span class="stat-number">{{ hazards | length }}</span>
+                    <span class="stat-label">Hazards Analyzed</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-item">
+                    <span class="stat-number">{{ "%.1f"|format(hazards[0][1] | float) }}</span>
+                    <span class="stat-label">Highest Risk Score</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Monitoring Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready to Create Your Emergency Plan?</h2>
+        <p class="lead mb-4">Don't wait for disaster to strike. Get personalized safety plans for each risk in your area.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            {% for hazard_name, score, explanation in hazards %}
+            <a href="{{ url_for(hazard_name.lower()) }}" class="btn btn-light btn-lg px-4 py-3 fw-bold">
+                <i class="fas fa-{% if hazard_name == 'Wildfire' %}fire{% elif hazard_name == 'Flood' %}water{% else %}mountain{% endif %} me-2"></i>{{ hazard_name }} Plan
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+// Animate progress rings on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const progressRing = entry.target;
+                const progressCircle = progressRing.querySelector('.progress');
+                if (progressCircle && !progressCircle.style.strokeDashoffset) {
+                    // Animation is already set via CSS, just trigger it
+                    progressCircle.style.transition = 'stroke-dashoffset 2s ease-in-out';
+                }
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.progress-ring').forEach(ring => {
+        observer.observe(ring);
+    });
+
+    // Add smooth scrolling to anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
