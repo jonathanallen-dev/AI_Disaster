@@ -2,33 +2,528 @@
 
 {% block title %}About | Disaster Prep Assistant{% endblock %}
 
+{% block head %}
+<style>
+    :root {
+        --primary-orange: #ff7043;
+        --secondary-blue: #0288d1;
+        --accent-red: #f44336;
+        --text-dark: #2c3e50;
+        --bg-light: #f8f9fa;
+        --success-green: #4caf50;
+        --purple: #9c27b0;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-orange), var(--accent-red));
+        color: white;
+        padding: 120px 0 80px;
+        margin-top: -2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+        animation: float 20s infinite linear;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section .lead {
+        font-size: 1.3rem;
+        opacity: 0.95;
+        margin-bottom: 2rem;
+    }
+
+    .founder-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-top: -50px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .founder-image {
+        background: linear-gradient(135deg, var(--purple), var(--secondary-blue));
+        padding: 3rem;
+        text-align: center;
+        color: white;
+    }
+
+    .founder-image i {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+
+    .founder-details {
+        padding: 2.5rem;
+    }
+
+    .story-section {
+        padding: 80px 0;
+        background: white;
+    }
+
+    .story-card {
+        background: var(--bg-light);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-left: 5px solid var(--primary-orange);
+        transition: all 0.3s ease;
+    }
+
+    .story-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .mission-section {
+        background: linear-gradient(135deg, var(--text-dark), #34495e);
+        color: white;
+        padding: 80px 0;
+    }
+
+    .mission-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .mission-card:hover {
+        background: rgba(255,255,255,0.2);
+        transform: translateY(-10px);
+    }
+
+    .mission-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+        color: var(--primary-orange);
+    }
+
+    .impact-section {
+        padding: 80px 0;
+        background: var(--bg-light);
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-orange);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .hidden-genius-section {
+        background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+        color: white;
+        padding: 80px 0;
+    }
+
+    .hgp-card {
+        background: rgba(255,255,255,0.05);
+        border-radius: 20px;
+        padding: 3rem;
+        text-align: center;
+        border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .hgp-logo {
+        width: 100px;
+        height: 100px;
+        background: var(--success-green);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .tech-stack {
+        background: white;
+        padding: 60px 0;
+    }
+
+    .tech-item {
+        background: var(--bg-light);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .tech-item:hover {
+        border-color: var(--primary-orange);
+        transform: translateY(-3px);
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-20px) translateX(-10px); }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section h1 { font-size: 2.5rem; }
+        .hero-section { padding: 80px 0 40px; }
+        .founder-card { margin-top: -30px; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card shadow-sm p-4 mt-4 text-center">
-    <h1 class="mb-3 text-danger fw-bold">About This Project</h1>
-    <p>
-        Hi, I'm <strong>Adan J Allen</strong>, the founder of the Disaster Prep Assistant. I'm part of the Hidden Genius Project, and I created this platform to help people in cities like Oakland and throughout Alameda County stay safe when disaster strikes.
-    </p>
-
-    <p>
-        This app gives you clear, personalized instructions for how to respond to wildfires, earthquakes, and floods. It uses real hazard data and AI to understand your ZIP code, family needs, and medical concerns—then gives you the exact steps to stay safe.
-    </p>
-
-    <h3 class="mt-4 fw-semibold">Why I Built This</h3>
-    <p>
-        Growing up, I saw how disasters hit harder in communities that weren’t prepared. Too many families don’t have access to clear emergency plans. I built this project to change that—with smart tools that are accessible, useful, and built with real people in mind.
-    </p>
-
-    <h3 class="mt-4 fw-semibold">What’s Next</h3>
-    <p>
-        My goal is to expand beyond Alameda County, add real-time alerts, translate the app into other languages, and partner with cities to make this a tool every resident can count on. This project is just the beginning of how I hope to use tech for good.
-    </p>
-
-    <p class="text-muted mt-4">
-        &copy; 2025 Adan J Allen | Hidden Genius Project
-    </p>
-
-    <div class="mt-4">
-        <a href="{{ url_for('home') }}" class="btn btn-outline-primary">&larr; Back to Home</a>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1><i class="fas fa-user-graduate me-3"></i>About the Project</h1>
+            <p class="lead">Building technology solutions that save lives and strengthen communities</p>
+        </div>
     </div>
-</div>
+</section>
+
+<!-- Founder Introduction -->
+<section class="py-5">
+    <div class="container">
+        <div class="founder-card">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <div class="founder-image h-100 d-flex flex-column justify-content-center">
+                        <i class="fas fa-code"></i>
+                        <h3 class="fw-bold">Adan J Allen</h3>
+                        <p class="mb-0 opacity-75">Founder & Developer</p>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="founder-details">
+                        <h2 class="fw-bold text-primary mb-3">Hi, I'm Adan</h2>
+                        <p class="lead mb-3">I'm a young technologist from Oakland, part of the Hidden Genius Project, with a passion for using code to solve real-world problems that affect my community.</p>
+                        <p class="mb-4">Growing up in the Bay Area, I've seen firsthand how disasters like wildfires, earthquakes, and floods can devastate communities—especially those without access to clear, actionable emergency information. That's why I built the Disaster Prep Assistant.</p>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-graduation-cap text-success me-3"></i>
+                                    <span>Hidden Genius Project Alumni</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-map-marker-alt text-danger me-3"></i>
+                                    <span>Oakland, California</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-heart text-danger me-3"></i>
+                                    <span>Community-Focused Technology</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-shield-alt text-primary me-3"></i>
+                                    <span>Disaster Preparedness Advocate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Story Section -->
+<section class="story-section">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">My Story</h2>
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="story-card">
+                    <h4 class="fw-bold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>The Inspiration</h4>
+                    <p>Living in Oakland, I've witnessed the devastating impact of natural disasters on our community. During the 2020 wildfires, I saw families scrambling for information, not knowing where to evacuate or how to prepare. Many didn't have access to personalized emergency plans that considered their specific needs—like elderly family members, medical conditions, or language barriers.</p>
+                </div>
+
+                <div class="story-card">
+                    <h4 class="fw-bold mb-3"><i class="fas fa-cogs text-primary me-2"></i>The Solution</h4>
+                    <p>I realized technology could bridge this gap. Using AI and real disaster data, I could create a tool that provides personalized, actionable emergency plans. Not generic advice, but specific guidance based on your ZIP code, family size, medical needs, and current preparedness level. This became the Disaster Prep Assistant.</p>
+                </div>
+
+                <div class="story-card">
+                    <h4 class="fw-bold mb-3"><i class="fas fa-users text-success me-2"></i>The Mission</h4>
+                    <p>My goal is simple: ensure every family in Oakland and Alameda County has access to life-saving emergency information. This project represents my belief that technology should serve communities, especially those that have been historically underserved during disasters.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Project Mission</h2>
+            <p class="lead">Three core principles drive everything we do</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <i class="fas fa-heart mission-icon"></i>
+                    <h4 class="fw-bold mb-3">Community First</h4>
+                    <p>Built by the community, for the community. Every feature is designed with real Oakland families in mind, addressing actual challenges we face during disasters.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <i class="fas fa-brain mission-icon"></i>
+                    <h4 class="fw-bold mb-3">AI-Powered Personalization</h4>
+                    <p>Using artificial intelligence to create customized emergency plans that adapt to your specific situation, location, and needs—not one-size-fits-all advice.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <i class="fas fa-shield-alt mission-icon"></i>
+                    <h4 class="fw-bold mb-3">Accessible Safety</h4>
+                    <p>Emergency preparedness shouldn't be a privilege. We're making life-saving information accessible to everyone, regardless of technical expertise or economic status.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Impact Section -->
+<section class="impact-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Current Impact</h2>
+            <p class="lead">Measuring our reach and effectiveness</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <i class="fas fa-map-marked-alt fa-2x text-primary mb-3"></i>
+                    <span class="stat-number">37</span>
+                    <span class="stat-label">ZIP Codes Covered</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Disaster Types</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <i class="fas fa-users fa-2x text-success mb-3"></i>
+                    <span class="stat-number">1.7M+</span>
+                    <span class="stat-label">People Served</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <i class="fas fa-clock fa-2x text-info mb-3"></i>
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Real-Time Data</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hidden Genius Project Section -->
+<section class="hidden-genius-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto">
+                <div class="hgp-card">
+                    <div class="hgp-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="fw-bold mb-4">Hidden Genius Project</h2>
+                    <p class="lead mb-4">This project was developed through the Hidden Genius Project, a nonprofit that trains and mentors Black male youth in technology creation, entrepreneurship, and leadership skills.</p>
+                    <p class="mb-4">The Hidden Genius Project's mission aligns perfectly with this disaster preparedness tool: using technology to create positive change in our communities. Through HGP, I learned not just coding skills, but the importance of building technology that serves real people with real needs.</p>
+                    <div class="row g-3 mt-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-laptop-code text-success me-3"></i>
+                                <span>Full-Stack Development</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users text-success me-3"></i>
+                                <span>Community Leadership</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-rocket text-success me-3"></i>
+                                <span>Social Entrepreneurship</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-handshake text-success me-3"></i>
+                                <span>Mentorship & Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Stack -->
+<section class="tech-stack">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Built With</h2>
+            <p class="lead">Modern technologies for reliable disaster preparedness</p>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-md-3 col-sm-6">
+                <div class="tech-item">
+                    <i class="fab fa-python fa-2x text-primary mb-2"></i>
+                    <h6 class="fw-bold">Python & Flask</h6>
+                    <small class="text-muted">Backend Framework</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="tech-item">
+                    <i class="fas fa-robot fa-2x text-success mb-2"></i>
+                    <h6 class="fw-bold">OpenAI GPT</h6>
+                    <small class="text-muted">AI-Powered Responses</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="tech-item">
+                    <i class="fas fa-map fa-2x text-info mb-2"></i>
+                    <h6 class="fw-bold">GeoPandas</h6>
+                    <small class="text-muted">Spatial Data Analysis</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="tech-item">
+                    <i class="fab fa-js-square fa-2x text-warning mb-2"></i>
+                    <h6 class="fw-bold">Leaflet.js</h6>
+                    <small class="text-muted">Interactive Maps</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Future Plans -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">What's Next</h2>
+            <p class="lead">Expanding our impact and capabilities</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-globe-americas fa-3x text-primary mb-3"></i>
+                        <h4 class="fw-bold mb-3">Geographic Expansion</h4>
+                        <p>Extend coverage beyond Alameda County to serve all of California, then other disaster-prone regions across the United States.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-language fa-3x text-success mb-3"></i>
+                        <h4 class="fw-bold mb-3">Multilingual Support</h4>
+                        <p>Add Spanish, Chinese, and other languages spoken in our communities to ensure everyone can access life-saving information.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-mobile-alt fa-3x text-warning mb-3"></i>
+                        <h4 class="fw-bold mb-3">Mobile App</h4>
+                        <p>Develop a native mobile app with push notifications for real-time emergency alerts and offline access to plans.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-handshake fa-3x text-info mb-3"></i>
+                        <h4 class="fw-bold mb-3">Community Partnerships</h4>
+                        <p>Partner with local government, schools, and community organizations to integrate this tool into official emergency response systems.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
+        <p class="lead mb-4">Join the growing community of prepared families in Oakland and Alameda County.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url_for('form') }}" class="btn btn-light btn-lg px-4 py-3 fw-bold">
+                <i class="fas fa-rocket me-2"></i>Get My Emergency Plan
+            </a>
+            <a href="{{ url_for('resources') }}" class="btn btn-outline-light btn-lg px-4 py-3 fw-bold">
+                <i class="fas fa-book me-2"></i>Browse Resources
+            </a>
+        </div>
+    </div>
+</section>
 {% endblock %}

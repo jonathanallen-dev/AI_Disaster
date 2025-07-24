@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -112,6 +113,51 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* Quick Start Form */
+        .quick-start-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-top: 3rem;
+            animation: slideInUp 1s ease-out 0.9s both;
+        }
+
+        .quick-start-form h3 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 0.2rem rgba(255, 112, 67, 0.25);
+        }
+
+        .btn-get-started {
+            background: linear-gradient(45deg, var(--primary-orange), var(--accent-red));
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-get-started:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 112, 67, 0.3);
+            color: white;
         }
 
         /* Features Section */
@@ -232,6 +278,7 @@
             .hero p { font-size: 1.1rem; }
             .about-content { flex-direction: column; }
             .feature-card { margin-bottom: 2rem; }
+            .quick-start-form { margin-top: 2rem; padding: 1.5rem; }
         }
 
         /* Floating Elements */
@@ -259,7 +306,7 @@
             animation-delay: 4s;
         }
 
-        /* Navigation */
+        /* Navigation Override */
         .navbar {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
@@ -284,23 +331,6 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#"><i class="fas fa-shield-alt me-2"></i>Disaster Prep Assistant</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#stats">Impact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <!-- Hero Section -->
     <section class="hero">
         <!-- Floating Elements -->
@@ -318,9 +348,50 @@
             <div class="hero-content">
                 <h1>Stay Safe.<br>Stay Prepared.</h1>
                 <p class="lead">Personalized disaster preparedness for Oakland and Alameda County.<br>Get AI-powered emergency plans tailored to your family's needs.</p>
-                <a href="/home" class="cta-button">
-                    <i class="fas fa-rocket me-2"></i>Get Your Emergency Plan
-                </a>
+                
+                <!-- Quick Start Form -->
+                <div class="quick-start-form mx-auto" style="max-width: 500px;">
+                    <h3 class="text-center">Get Your Personalized Emergency Plan</h3>
+                    <form action="{{ url_for('form') }}" method="POST">
+                        <div class="mb-3">
+                            <label for="zip_code" class="form-label">ZIP Code</label>
+                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="e.g. 94601" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="household" class="form-label">Household Size</label>
+                                <select class="form-control" id="household" name="household" required>
+                                    <option value="">Select...</option>
+                                    <option value="1">1 person</option>
+                                    <option value="2">2 people</option>
+                                    <option value="3">3 people</option>
+                                    <option value="4">4 people</option>
+                                    <option value="5+">5+ people</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="preparedness" class="form-label">Current Preparedness</label>
+                                <select class="form-control" id="preparedness" name="preparedness" required>
+                                    <option value="">Select...</option>
+                                    <option value="none">Not prepared</option>
+                                    <option value="basic">Basic supplies</option>
+                                    <option value="moderate">Moderate prep</option>
+                                    <option value="well-prepared">Well prepared</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="special_needs" class="form-label">Special Medical Needs (Optional)</label>
+                            <input type="text" class="form-control" id="special_needs" name="special_needs" placeholder="e.g. Asthma, wheelchair access, medications">
+                        </div>
+
+                        <button type="submit" class="btn btn-get-started w-100">
+                            <i class="fas fa-rocket me-2"></i>Get My Emergency Plan
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -340,6 +411,7 @@
                             <i class="fas fa-fire feature-icon wildfire-icon"></i>
                             <h4 class="fw-bold mb-3">Wildfire Protection</h4>
                             <p>Real-time wildfire tracking with evacuation routes and safety protocols specific to your area. Get alerts before it's too late.</p>
+                            <a href="{{ url_for('wildfire') }}" class="btn btn-outline-danger btn-sm">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -350,6 +422,7 @@
                             <i class="fas fa-mountain feature-icon earthquake-icon"></i>
                             <h4 class="fw-bold mb-3">Earthquake Readiness</h4>
                             <p>Seismic risk assessment and personalized earthquake preparedness plans. Know what to do before, during, and after the shaking stops.</p>
+                            <a href="{{ url_for('earthquake') }}" class="btn btn-outline-secondary btn-sm">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -360,6 +433,7 @@
                             <i class="fas fa-water feature-icon flood-icon"></i>
                             <h4 class="fw-bold mb-3">Flood Safety</h4>
                             <p>Flood zone mapping and water emergency protocols. Protect your family with accurate flood risk data and escape planning.</p>
+                            <a href="{{ url_for('flood') }}" class="btn btn-outline-primary btn-sm">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -438,6 +512,10 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mt-4">
+                        <a href="{{ url_for('about') }}" class="btn btn-outline-primary me-3">Learn More About the Project</a>
+                        <a href="{{ url_for('resources') }}" class="btn btn-outline-secondary">View Resources</a>
+                    </div>
                 </div>
                 <div class="about-image">
                     <div class="bg-primary rounded-3 p-5 text-center text-white">
@@ -455,7 +533,7 @@
         <div class="container">
             <h2 class="display-5 fw-bold mb-3">Ready to Protect Your Family?</h2>
             <p class="lead mb-4">Join thousands of Bay Area residents who trust Disaster Prep Assistant for their emergency planning.</p>
-            <a href="/home" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+            <a href="#" onclick="document.getElementById('zip_code').scrollIntoView({behavior: 'smooth'}); document.getElementById('zip_code').focus();" class="btn btn-light btn-lg px-5 py-3 fw-bold">
                 <i class="fas fa-shield-alt me-2"></i>Start Your Emergency Plan Now
             </a>
         </div>
@@ -474,9 +552,9 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="d-flex justify-content-md-end justify-content-start gap-3">
-                        <a href="/about" class="text-white-50 text-decoration-none">About</a>
-                        <a href="/home" class="text-white-50 text-decoration-none">Get Started</a>
-                        <a href="#" class="text-white-50 text-decoration-none">Contact</a>
+                        <a href="{{ url_for('about') }}" class="text-white-50 text-decoration-none">About</a>
+                        <a href="{{ url_for('resources') }}" class="text-white-50 text-decoration-none">Resources</a>
+                        <a href="{{ url_for('live_earthquake_map') }}" class="text-white-50 text-decoration-none">Live Earthquake Map</a>
                     </div>
                 </div>
             </div>
@@ -502,10 +580,12 @@
         // Add scroll effect to navbar
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-            } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                }
             }
         });
 
@@ -541,6 +621,38 @@
 
         // Initialize animations
         document.addEventListener('DOMContentLoaded', animateStats);
+
+        // Form validation and enhancement
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const zipCode = document.getElementById('zip_code').value;
+            
+            // Basic ZIP code validation
+            if (!/^\d{5}$/.test(zipCode)) {
+                e.preventDefault();
+                alert('Please enter a valid 5-digit ZIP code.');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            submitBtn.disabled = true;
+            
+            // Re-enable button after a delay if form submission fails
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 10000);
+        });
+
+        // Auto-focus ZIP code field on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const zipInput = document.getElementById('zip_code');
+            if (zipInput) {
+                zipInput.focus();
+            }
+        });
     </script>
 </body>
 </html>

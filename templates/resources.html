@@ -1,51 +1,409 @@
 {% extends "base.html" %}
 
-{% block title %}Disaster Resources{% endblock %}
+{% block title %}Emergency Resources | Disaster Prep Assistant{% endblock %}
+
+{% block head %}
+<style>
+    :root {
+        --primary-orange: #ff7043;
+        --secondary-blue: #0288d1;
+        --accent-red: #f44336;
+        --text-dark: #2c3e50;
+        --bg-light: #f8f9fa;
+        --success-green: #4caf50;
+        --warning-yellow: #ff9800;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-orange), var(--accent-red));
+        color: white;
+        padding: 100px 0 50px;
+        margin-top: -2rem;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+    }
+
+    .resource-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .resource-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+    }
+
+    .resource-card.emergency::before { background: var(--accent-red); }
+    .resource-card.preparation::before { background: var(--primary-orange); }
+    .resource-card.local::before { background: var(--secondary-blue); }
+    .resource-card.communication::before { background: var(--success-green); }
+
+    .resource-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .resource-card.emergency .resource-icon { color: var(--accent-red); }
+    .resource-card.preparation .resource-icon { color: var(--primary-orange); }
+    .resource-card.local .resource-icon { color: var(--secondary-blue); }
+    .resource-card.communication .resource-icon { color: var(--success-green); }
+
+    .btn-resource {
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .btn-emergency { 
+        background: var(--accent-red); 
+        color: white; 
+        border: 2px solid var(--accent-red);
+    }
+    .btn-emergency:hover { 
+        background: transparent; 
+        color: var(--accent-red); 
+    }
+
+    .btn-preparation { 
+        background: var(--primary-orange); 
+        color: white; 
+        border: 2px solid var(--primary-orange);
+    }
+    .btn-preparation:hover { 
+        background: transparent; 
+        color: var(--primary-orange); 
+    }
+
+    .btn-local { 
+        background: var(--secondary-blue); 
+        color: white; 
+        border: 2px solid var(--secondary-blue);
+    }
+    .btn-local:hover { 
+        background: transparent; 
+        color: var(--secondary-blue); 
+    }
+
+    .btn-communication { 
+        background: var(--success-green); 
+        color: white; 
+        border: 2px solid var(--success-green);
+    }
+    .btn-communication:hover { 
+        background: transparent; 
+        color: var(--success-green); 
+    }
+
+    .emergency-contacts {
+        background: linear-gradient(135deg, var(--text-dark), #34495e);
+        color: white;
+        padding: 60px 0;
+        margin: 60px 0 0;
+    }
+
+    .contact-item {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .contact-item:hover {
+        background: rgba(255,255,255,0.2);
+        transform: translateY(-3px);
+    }
+
+    .contact-number {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary-orange);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .quick-tips {
+        background: var(--bg-light);
+        padding: 60px 0;
+    }
+
+    .tip-item {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border-left: 4px solid var(--primary-orange);
+        transition: all 0.3s ease;
+    }
+
+    .tip-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .section-divider {
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-orange), var(--accent-red));
+        border: none;
+        margin: 40px 0;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section h1 { font-size: 2.5rem; }
+        .hero-section { padding: 60px 0 30px; }
+        .resource-card { margin-bottom: 2rem; }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Disaster Preparedness Resources</h1>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="text-center">
+            <h1><i class="fas fa-life-ring me-3"></i>Emergency Resources</h1>
+            <p class="lead">Essential tools, contacts, and information to keep you and your family safe during disasters</p>
+        </div>
+    </div>
+</section>
 
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Emergency Kit Checklist</h5>
-                    <p class="card-text">See what items to pack for disasters like wildfires, earthquakes, and floods.</p>
-                    <a href="https://www.ready.gov/kit" target="_blank" class="btn btn-primary">View Checklist</a>
-                </div>
-            </div>
+<!-- Main Resources -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Essential Disaster Resources</h2>
+            <p class="lead">Everything you need to prepare for and respond to emergencies</p>
         </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">FEMA Disaster Help</h5>
-                    <p class="card-text">Apply for assistance, learn about disaster types, and get recovery support.</p>
-                    <a href="https://www.fema.gov" target="_blank" class="btn btn-primary">Visit FEMA.gov</a>
+        <div class="row g-4">
+            <!-- Emergency Kits -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card resource-card emergency">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-medkit resource-icon"></i>
+                        <h4 class="fw-bold mb-3">Emergency Kit Essentials</h4>
+                        <p class="mb-4">Complete checklist of supplies every household needs for 72 hours of self-sufficiency during disasters.</p>
+                        <div class="mb-3">
+                            <small class="text-muted">✓ Food & Water ✓ First Aid ✓ Tools ✓ Documents</small>
+                        </div>
+                        <a href="https://www.ready.gov/kit" target="_blank" class="btn btn-resource btn-emergency">
+                            <i class="fas fa-external-link-alt me-2"></i>Get Checklist
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Local Shelter Map</h5>
-                    <p class="card-text">Find shelters in Alameda County during an active disaster.</p>
-                    <a href="https://www.redcross.org/get-help/disaster-relief-and-recovery-services/find-an-open-shelter.html" target="_blank" class="btn btn-primary">Find Shelters</a>
+            <!-- Family Emergency Plan -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card resource-card preparation">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-users resource-icon"></i>
+                        <h4 class="fw-bold mb-3">Family Emergency Plan</h4>
+                        <p class="mb-4">Step-by-step guide to create a comprehensive emergency plan that covers evacuation routes and family communication.</p>
+                        <div class="mb-3">
+                            <small class="text-muted">✓ Evacuation Routes ✓ Meeting Points ✓ Contact Lists</small>
+                        </div>
+                        <a href="https://www.ready.gov/plan" target="_blank" class="btn btn-resource btn-preparation">
+                            <i class="fas fa-external-link-alt me-2"></i>Create Plan
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Evacuation Planning</h5>
-                    <p class="card-text">How to create a family emergency plan that includes evacuation routes and contacts.</p>
-                    <a href="https://www.ready.gov/evacuation" target="_blank" class="btn btn-primary">Plan Your Evacuation</a>
+            <!-- Local Emergency Services -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card resource-card local">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-map-marked-alt resource-icon"></i>
+                        <h4 class="fw-bold mb-3">Alameda County Emergency</h4>
+                        <p class="mb-4">Official emergency management resources, shelter locations, and evacuation information specific to Alameda County.</p>
+                        <div class="mb-3">
+                            <small class="text-muted">✓ Local Shelters ✓ Evacuation Zones ✓ County Alerts</small>
+                        </div>
+                        <a href="https://www.alamedacountyca.gov/emergencysite/emergency-site.htm" target="_blank" class="btn btn-resource btn-local">
+                            <i class="fas fa-external-link-alt me-2"></i>Local Resources
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Tools -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card resource-card communication">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-broadcast-tower resource-icon"></i>
+                        <h4 class="fw-bold mb-3">Emergency Alerts & Communication</h4>
+                        <p class="mb-4">Sign up for emergency alerts and learn about communication methods during disasters when cell towers may be down.</p>
+                        <div class="mb-3">
+                            <small class="text-muted">✓ AC Alert System ✓ Emergency Radio ✓ Social Media</small>
+                        </div>
+                        <a href="https://www.acgov.org/ready/" target="_blank" class="btn btn-resource btn-communication">
+                            <i class="fas fa-external-link-alt me-2"></i>Get Alerts
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Specialized Resources -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Disaster-Specific Resources</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card resource-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-fire text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5 class="fw-bold">Wildfire Resources</h5>
+                        <p>CalFire incident information, evacuation maps, and air quality monitoring.</p>
+                        <a href="https://www.fire.ca.gov/" target="_blank" class="btn btn-outline-danger btn-sm">CalFire Info</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card resource-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mountain text-secondary mb-3" style="font-size: 2.5rem;"></i>
+                        <h5 class="fw-bold">Earthquake Resources</h5>
+                        <p>USGS earthquake data, ShakeAlert system, and seismic safety information.</p>
+                        <a href="https://earthquake.usgs.gov/" target="_blank" class="btn btn-outline-secondary btn-sm">USGS Data</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card resource-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-water text-primary mb-3" style="font-size: 2.5rem;"></i>
+                        <h5 class="fw-bold">Flood Resources</h5>
+                        <p>FEMA flood maps, local flood control district info, and flood insurance guidance.</p>
+                        <a href="https://www.floodsmart.gov/" target="_blank" class="btn btn-outline-primary btn-sm">Flood Info</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Emergency Contacts -->
+<section class="emergency-contacts">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Emergency Contacts</h2>
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt fa-2x mb-3 text-warning"></i>
+                    <span class="contact-number">911</span>
+                    <span class="contact-label">Life-Threatening Emergency</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-item">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3 text-warning"></i>
+                    <span class="contact-number">311</span>
+                    <span class="contact-label">Non-Emergency Services</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-item">
+                    <i class="fas fa-heart fa-2x mb-3 text-warning"></i>
+                    <span class="contact-number">211</span>
+                    <span class="contact-label">Health & Human Services</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-item">
+                    <i class="fas fa-info-circle fa-2x mb-3 text-warning"></i>
+                    <span class="contact-number">511</span>
+                    <span class="contact-label">Traffic & Transit Info</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Tips -->
+<section class="quick-tips">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Quick Emergency Tips</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="tip-item">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-clock text-warning me-2"></i>First 72 Hours</h5>
+                    <p class="mb-0">Emergency responders may not be able to reach you immediately. Have supplies to last 72 hours minimum.</p>
+                </div>
+                <div class="tip-item">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-route text-warning me-2"></i>Know Your Routes</h5>
+                    <p class="mb-0">Identify multiple evacuation routes from your home, work, and children's schools.</p>
+                </div>
+                <div class="tip-item">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-file-alt text-warning me-2"></i>Important Documents</h5>
+                    <p class="mb-0">Keep copies of insurance, medical records, and ID in a waterproof container.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="tip-item">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-mobile-alt text-warning me-2"></i>Communication Plan</h5>
+                    <p class="mb-0">Choose an out-of-state contact person and make sure everyone knows their number.</p>
+                </div>
+                <div class="tip-item">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-battery-full text-warning me-2"></i>Power Backup</h5>
+                    <p class="mb-0">Keep phone chargers, portable batteries, and a battery-powered or hand-crank radio.</p>
+                </div>
+                <div class="tip-item">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-home text-warning me-2"></i>Home Safety</h5>
+                    <p class="mb-0">Know how to turn off utilities (gas, water, electricity) and keep tools accessible.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Back to App -->
+<section class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h3 class="fw-bold mb-3">Ready to Create Your Personal Emergency Plan?</h3>
+        <p class="lead mb-4">Use our AI-powered tool to get customized disaster preparedness advice for your specific situation.</p>
+        <a href="{{ url_for('form') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+            <i class="fas fa-rocket me-2"></i>Get My Emergency Plan
+        </a>
+    </div>
+</section>
 {% endblock %}
