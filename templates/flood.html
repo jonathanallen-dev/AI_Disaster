@@ -563,19 +563,22 @@ messageInput.addEventListener('input', function() {
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 
-// Handle form submission
+// Handle form submission - FIXED VERSION
 document.getElementById('chat-form').addEventListener('submit', function(e) {
     const submitButton = document.getElementById('submit-button');
     const messageInput = document.getElementById('message-input');
     const chatMessages = document.getElementById('chat-messages');
     
-    // Add loading state
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    submitButton.disabled = true;
-    
-    // Add user message to chat immediately
+    // Get the user message before clearing
     const userMessage = messageInput.value.trim();
+    
+    // Only add UI updates if there's a message, but don't prevent form submission
     if (userMessage) {
+        // Add loading state
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        submitButton.disabled = true;
+        
+        // Add user message to chat immediately for better UX
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message user';
         messageDiv.innerHTML = `
@@ -584,6 +587,8 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
         `;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Clear the input for better UX
         messageInput.value = '';
         messageInput.style.height = 'auto';
         
@@ -603,7 +608,13 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
         `;
         chatMessages.appendChild(typingDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Restore the input value so it gets submitted
+        messageInput.value = userMessage;
     }
+    
+    // Let the form submit normally - this is the key fix!
+    // Don't call e.preventDefault()
 });
 
 // Initialize map centered on Alameda County

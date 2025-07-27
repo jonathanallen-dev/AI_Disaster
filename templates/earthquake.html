@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Earthquake Risk - Disaster Prep Assistant{% endblock %}
+{% block title %}Earthquake Preparedness - Disaster Prep Assistant{% endblock %}
 
 {% block head %}
 <style>
     :root {
-        --earthquake-primary: #673ab7;
-        --earthquake-secondary: #2196f3;
-        --earthquake-accent: #9c27b0;
+        --earthquake-primary: #795548;
+        --earthquake-secondary: #8d6e63;
+        --earthquake-accent: #a1887f;
         --text-dark: #2c3e50;
         --bg-light: #f8f9fa;
         --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
     body {
-        background: linear-gradient(135deg, #f3f0ff 0%, #e8f4fd 100%);
+        background: linear-gradient(135deg, #f5f3f0 0%, #efebe9 100%);
         min-height: 100vh;
     }
 
@@ -35,10 +35,10 @@
         right: 0;
         bottom: 0;
         background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="seismic" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M0,15 Q7.5,5 15,15 Q22.5,25 30,15" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/></pattern></defs><rect width="100%" height="100%" fill="url(%23seismic)"/></svg>');
-        animation: seismic 4s infinite ease-in-out;
+        animation: shake 4s infinite ease-in-out;
     }
 
-    @keyframes seismic {
+    @keyframes shake {
         0%, 100% { transform: translateX(0); }
         25% { transform: translateX(-2px); }
         75% { transform: translateX(2px); }
@@ -110,34 +110,7 @@
         font-weight: 700;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-    }
-
-    .map-title {
-        display: flex;
-        align-items: center;
         gap: 0.5rem;
-    }
-
-    .live-indicator {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    .live-dot {
-        width: 8px;
-        height: 8px;
-        background: #4caf50;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
     }
 
     .map-wrapper {
@@ -181,9 +154,9 @@
     }
 
     .ai-response-container {
-        background: linear-gradient(135deg, #e8eaf6, #e1f5fe);
+        background: linear-gradient(135deg, #efebe9, #d7ccc8);
         padding: 2rem;
-        border-bottom: 1px solid #90caf9;
+        border-bottom: 1px solid #bcaaa4;
         position: relative;
         z-index: 10;
     }
@@ -306,7 +279,7 @@
     .chat-input:focus {
         outline: none;
         border-color: var(--earthquake-primary);
-        box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1);
+        box-shadow: 0 0 0 3px rgba(121, 85, 72, 0.1);
     }
 
     .chat-submit {
@@ -422,12 +395,6 @@
             border-radius: 25px;
             height: 45px;
         }
-
-        .map-header {
-            flex-direction: column;
-            gap: 0.5rem;
-            text-align: center;
-        }
     }
 
     /* Loading States */
@@ -474,7 +441,7 @@
     <div class="container">
         <div class="page-header-content">
             <h1><i class="fas fa-mountain me-3"></i>Earthquake Risk & Safety</h1>
-            <p class="lead">Seismic preparedness and live monitoring for ZIP {{ zip_code }}</p>
+            <p class="lead">Seismic preparedness and safety planning for ZIP {{ zip_code }}</p>
         </div>
         <div class="risk-indicator">
             <span class="risk-score">{{ risk_score }}/10</span>
@@ -488,14 +455,8 @@
         <!-- Interactive Map -->
         <div class="map-container">
             <div class="map-header">
-                <div class="map-title">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span>Live Earthquakes & Fault Lines - {{ zip_code }}</span>
-                </div>
-                <div class="live-indicator">
-                    <div class="live-dot"></div>
-                    <span>Live Data</span>
-                </div>
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Fault Lines & Seismic Zones - {{ zip_code }}</span>
             </div>
             <div class="map-wrapper">
                 <div id="map"></div>
@@ -551,7 +512,7 @@
                         <textarea 
                             class="chat-input" 
                             name="message" 
-                            placeholder="Ask about drop, cover, and hold on, earthquake kits, retrofitting, or any seismic safety question..."
+                            placeholder="Ask about emergency kits, structural safety, fault lines, or any earthquake safety question..."
                             required
                             rows="1"
                             id="message-input"
@@ -567,32 +528,32 @@
         <!-- Quick Safety Tips -->
         <div class="safety-tips-grid">
             <div class="safety-tip">
-                <i class="fas fa-hand-paper safety-tip-icon"></i>
-                <h5>Drop, Cover, Hold On</h5>
-                <p>When shaking starts: drop to hands and knees, take cover under desk, hold on until shaking stops.</p>
+                <i class="fas fa-shield-alt safety-tip-icon"></i>
+                <h5>Drop, Cover, Hold</h5>
+                <p>During shaking: drop to hands and knees, take cover under a sturdy table, hold on.</p>
             </div>
             <div class="safety-tip">
-                <i class="fas fa-tools safety-tip-icon"></i>
+                <i class="fas fa-home safety-tip-icon"></i>
                 <h5>Secure Your Space</h5>
-                <p>Anchor heavy furniture and appliances to prevent them from falling during an earthquake.</p>
+                <p>Bolt tall furniture to walls and secure heavy objects that could fall.</p>
             </div>
             <div class="safety-tip">
-                <i class="fas fa-medkit safety-tip-icon"></i>
+                <i class="fas fa-wrench safety-tip-icon"></i>
+                <h5>Know Your Shutoffs</h5>
+                <p>Learn how to turn off gas, water, and electricity in case of damage.</p>
+            </div>
+            <div class="safety-tip">
+                <i class="fas fa-first-aid safety-tip-icon"></i>
                 <h5>Emergency Kit</h5>
-                <p>Keep 72 hours of supplies including water, food, first aid, and emergency tools.</p>
-            </div>
-            <div class="safety-tip">
-                <i class="fas fa-mobile-alt safety-tip-icon"></i>
-                <h5>ShakeAlert System</h5>
-                <p>Enable earthquake early warning alerts on your phone for precious seconds to take cover.</p>
+                <p>Keep 72-hour supply of water, food, medications, and emergency supplies.</p>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Leaflet CSS & JS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 // Auto-expand textarea
@@ -602,19 +563,22 @@ messageInput.addEventListener('input', function() {
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 
-// Handle form submission
+// Handle form submission - FIXED VERSION
 document.getElementById('chat-form').addEventListener('submit', function(e) {
     const submitButton = document.getElementById('submit-button');
     const messageInput = document.getElementById('message-input');
     const chatMessages = document.getElementById('chat-messages');
     
-    // Add loading state
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    submitButton.disabled = true;
-    
-    // Add user message to chat immediately
+    // Get the user message before clearing
     const userMessage = messageInput.value.trim();
+    
+    // Only add UI updates if there's a message, but don't prevent form submission
     if (userMessage) {
+        // Add loading state
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        submitButton.disabled = true;
+        
+        // Add user message to chat immediately for better UX
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message user';
         messageDiv.innerHTML = `
@@ -623,6 +587,8 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
         `;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Clear the input for better UX
         messageInput.value = '';
         messageInput.style.height = 'auto';
         
@@ -642,24 +608,31 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
         `;
         chatMessages.appendChild(typingDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Restore the input value so it gets submitted
+        messageInput.value = userMessage;
     }
+    
+    // Let the form submit normally - this is the key fix!
+    // Don't call e.preventDefault()
 });
 
 // Initialize map
-const map = L.map('map').setView([37.5, -119.5], 6); // Centered on California
+const map = L.map('map').setView([37.75, -122.2], 10);
 
+// Base map
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Add user's ZIP code boundary
+// ZIP outline
 {% if zip_geojson %}
 const userZipData = {{ zip_geojson | safe }};
 const userZipLayer = L.geoJSON(userZipData, {
     style: {
-        color: '#ff4444',
-        weight: 3,
-        fillColor: '#ff4444',
+        color: '#000000',
+        weight: 5,
+        fillColor: '#000000',
         fillOpacity: 0.2
     }
 }).addTo(map);
@@ -668,71 +641,59 @@ map.fitBounds(userZipLayer.getBounds());
 console.warn("ZIP GeoJSON not available.");
 {% endif %}
 
-// Add local fault lines from server
+// Load fault lines if available
 {% if fault_geojson %}
 const faultData = {{ fault_geojson | safe }};
 L.geoJSON(faultData, {
-  style: {
-    color: "#6a1b9a",
-    weight: 2,
-    dashArray: "4"
-  }
+    style: {
+        color: '#d32f2f',
+        weight: 3,
+        opacity: 0.8
+    },
+    onEachFeature: (feature, layer) => {
+        let popup = '<strong>Fault Line</strong><br>';
+        for (const key in feature.properties) {
+            const val = feature.properties[key];
+            if (val) popup += `<strong>${key}:</strong> ${val}<br>`;
+        }
+        layer.bindPopup(popup);
+    }
 }).addTo(map);
 {% else %}
-console.warn("Fault GeoJSON not available.");
-{% endif %}
-
-// Bounding box for CA: [south, west, north, east]
-const californiaBounds = {
-  minLat: 32.5,
-  maxLat: 42.0,
-  minLon: -124.5,
-  maxLon: -114.0
-};
-
-function isInCalifornia(lat, lon) {
-  return lat >= californiaBounds.minLat &&
-         lat <= californiaBounds.maxLat &&
-         lon >= californiaBounds.minLon &&
-         lon <= californiaBounds.maxLon;
-}
-
-function loadEarthquakes() {
-  fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson")
-    .then(res => res.json())
+// Try to load fault lines from static file
+fetch('/static/Fault_lines.Geojson')
+    .then(response => response.json())
     .then(data => {
-      const quakeLayer = L.geoJSON(data, {
-        filter: feature => {
-          const [lon, lat] = feature.geometry.coordinates;
-          return isInCalifornia(lat, lon);
-        },
-        pointToLayer: (feature, latlng) => {
-          const mag = feature.properties.mag || 0;
-          return L.circleMarker(latlng, {
-            radius: Math.max(mag * 2, 3),
-            fillColor: "#f44336",
-            color: "#b71c1c",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.6
-          }).bindPopup(`
-            <strong>Magnitude:</strong> ${mag}<br>
-            <strong>Location:</strong> ${feature.properties.place}<br>
-            <strong>Depth:</strong> ${feature.geometry.coordinates[2]} km<br>
-            <strong>Time:</strong> ${new Date(feature.properties.time).toLocaleString()}
-          `);
-        }
-      });
-      quakeLayer.addTo(map);
+        L.geoJSON(data, {
+            style: {
+                color: '#d32f2f',
+                weight: 3,
+                opacity: 0.8
+            },
+            onEachFeature: (feature, layer) => {
+                let popup = '<strong>Fault Line</strong><br>';
+                for (const key in feature.properties) {
+                    const val = feature.properties[key];
+                    if (val) popup += `<strong>${key}:</strong> ${val}<br>`;
+                }
+                layer.bindPopup(popup);
+            }
+        }).addTo(map);
+    })
+    .catch(error => {
+        console.warn('Could not load fault line data:', error);
+        const errorDiv = document.createElement('div');
+        errorDiv.innerHTML = `
+            <div style="position: absolute; top: 10px; right: 10px; background: #ffcdd2; padding: 10px; border-radius: 8px; color: #c62828; font-weight: bold; z-index: 1000;">
+                ⚠️ Fault line data not available
+            </div>
+        `;
+        document.getElementById('map').appendChild(errorDiv);
     });
-}
+{% endif %}
 
 // Auto-scroll chat to bottom
 const chatMessages = document.getElementById('chat-messages');
 chatMessages.scrollTop = chatMessages.scrollHeight;
-
-// Load earthquakes initially and every 5 minutes
-loadEarthquakes();
-setInterval(loadEarthquakes, 5 * 60 * 1000);
 </script>
 {% endblock %}
