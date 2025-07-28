@@ -4,7 +4,7 @@ import os
 from shapely.geometry import Point
 
 # Paths to your data files (adjust if needed)
-ZIP_GEOJSON = "static/ca_california_zip_codes_geo.min.json"
+ZIP_GEOJSON = "static/zipbound.geojson"
 FLOOD_GEOJSON = "static/Flood_Control_District_Zones.geojson"
 WILDFIRE_GEOJSON = "static/AlamedaCounty_HazardZones.geojson"
 FAULT_SHP = "data/hazfaults2014_proj.shp"  # Fault shapefile
