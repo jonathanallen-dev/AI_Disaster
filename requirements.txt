@@ -13,3 +13,4 @@ openai
 pandas
 dotenv
 shapely
+requests
