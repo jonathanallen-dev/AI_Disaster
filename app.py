@@ -13,6 +13,7 @@ load_dotenv("secret.env")
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "super-secret-key")
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # --- Load risk data from CSV ---
 risk_df = pd.read_csv("static/zip_risk_scores.csv", dtype={"ZIP": str})
@@ -310,16 +311,21 @@ def get_risk_level(score):
 
 def load_geojson_file(filename):
     """Helper function to load geojson files safely"""
-    filepath = f"static/{filename}"
-    if os.path.exists(filepath):
-        try:
-            with open(filepath, 'r') as f:
-                return json.load(f)
-        except json.JSONDecodeError as e:
-            print(f"Error loading {filename}: {e}")
-            return None
-    else:
-        print(f"File not found: {filename}")
+    filepath = os.path.join(BASE_DIR, "static", filename)
+    print(f"Loading GeoJSON from: {filepath}")
+
+    if not os.path.exists(filepath):
+        print(f"GeoJSON file does not exist: {filepath}")
+        return None
+
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error decoding GeoJSON file {filepath}: {e}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error loading GeoJSON file {filepath}: {e}")
         return None
 
 def get_zip_boundary(zip_code):
@@ -459,9 +465,10 @@ def api_live_earthquakes():
     url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
     try:
         response = requests.get(url, timeout=10)
+        response.raise_for_status()
         data = response.json()
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Unable to load live earthquake data: {e}"}), 500
 
     # Alameda County bounds (more precise)
     bounds = {
@@ -505,7 +512,7 @@ def api_flood_zones():
 @app.route("/api/fault-lines")
 def api_fault_lines():
     """API endpoint for earthquake fault lines"""
-    data = load_geojson_file("fault_lines.geojson")
+    data = load_geojson_file("Fault_lines.Geojson")
     if data:
         return jsonify(data)
     return jsonify({"error": "Fault lines data not found"}), 404
@@ -744,7 +751,7 @@ Always reference their specific situation and risk level when answering question
     # Load fault data for earthquake pages
     fault_geojson = None
     if hazard == "earthquake":
-        fault_data = load_geojson_file("fault_lines.geojson")
+        fault_data = load_geojson_file("Fault_lines.Geojson")
         if fault_data:
             fault_geojson = json.dumps(fault_data)
 
@@ -788,5 +795,4 @@ def live_earthquake_map():
 
 # --- Run App ---
 if __name__ == "__main__":
-     port = int(os.environ.get('PORT',5000))
-     app.run(host='0.0.0.0',port=port,debug=True)
+    app.run(debug=True)
